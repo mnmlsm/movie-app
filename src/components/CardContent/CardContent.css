@@ -1,0 +1,61 @@
+.card-list .card.ant-card {
+  width: 456px;
+  height: 280px;
+  display: flex;
+  filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
+  margin-bottom: 36px;
+  border-radius: 0;
+}
+
+.card-list .ant-card-head-title {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 28px;
+}
+
+.card .ant-card-cover {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 188px;
+  height: 280px;
+}
+
+.card .ant-card-cover img {
+  flex: 1;
+  height: 104%;
+}
+
+.card .ant-card-body {
+  width: 268px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 12px;
+}
+
+.card .movie-description {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 22px;
+  margin-top: 8px;
+}
+
+.genres {
+  display: flex;
+  flex-direction: row;
+  margin-top: 8px;
+}
+
+.genres .genres-item {
+  color: rgba(0, 0, 0, 0.65);
+  margin-right: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 15px;
+  padding: 4px 8px;
+  background-color: #fafafa;
+  border-radius: 2px;
+}

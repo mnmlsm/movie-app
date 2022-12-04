@@ -33,6 +33,7 @@
     ]
   },
   "devDependencies": {
+    "antd": "^5.0.3",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.28.0",
     "eslint-auto-fix": "^1.0.4",
