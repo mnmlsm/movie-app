@@ -3,5 +3,6 @@
   flex-wrap: wrap;
   justify-content: space-between;
   max-width: 90%;
+  min-height: 100vh;
   margin: 0 auto;
 }

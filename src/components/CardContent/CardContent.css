@@ -25,7 +25,8 @@
 
 .card .ant-card-cover img {
   flex: 1;
-  height: 104%;
+  height: 102%;
+  width: auto;
 }
 
 .card .ant-card-body {
