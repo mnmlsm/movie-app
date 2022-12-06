@@ -1,9 +1,11 @@
 import React from 'react'
 import { Spin } from 'antd'
+import { Offline, Online } from 'react-detect-offline'
 
 import MovieDBService from '../../movieAPI'
 import CardContent from '../CardContent/CardContent'
 import './CardList.css'
+import ErrorIndicator from '../ErrorIndicator'
 
 export default class CardList extends React.Component {
   movieDBService = new MovieDBService()
@@ -11,41 +13,62 @@ export default class CardList extends React.Component {
   state = {
     data: [],
     isLoadingData: true,
+    error: false,
   }
 
   componentDidMount() {
     this.movieDBService
-      .getMovieListByPhrase('Space')
+      .getMovieListByPhrase('doctor')
       .then((result) => {
-        setTimeout(() => {
-          this.setState({
-            data: result.results,
-            isLoadingData: false,
-          })
-        }, 500)
+        this.setState({
+          data: result.results,
+          isLoadingData: false,
+        })
       })
-      .catch((error) => {
-        console.log(error)
-      })
+      .catch(this.onError)
+  }
+
+  onError = (err) => {
+    this.setState({
+      error: true,
+      isLoadingData: false,
+    })
   }
 
   render() {
-    const { data } = this.state
+    const { data, isLoadingData, error } = this.state
+
+    const hasData = !(isLoadingData || error)
+
+    const errorMessage = error ? <ErrorIndicator /> : null
+
+    const spinner = isLoadingData ? <Spin size={'large'} /> : null
+
+    const styleOffline = { justifyContent: 'center', alignItems: 'center' }
+    const styleOnLoading =
+      isLoadingData || error ? { justifyContent: 'center', alignItems: 'center' } : { justifyContent: 'space-between' }
+
+    const content = hasData
+      ? data.map((item, index) => {
+          return <CardContent key={item.id} id={index} movieData={data[index]} />
+        })
+      : null
 
     return (
-      <main
-        className="card-list"
-        style={
-          this.state.isLoadingData
-            ? { justifyContent: 'center', alignItems: 'center' }
-            : { justifyContent: 'space-between' }
-        }
-      >
-        {this.state.isLoadingData ? <Spin size={'large'} /> : null}
-        {data.map((item, index) => {
-          return <CardContent key={item.id} id={index} movieData={data[index]} />
-        })}
-      </main>
+      <React.Fragment>
+        <Online>
+          <main className="card-list" style={styleOnLoading}>
+            {errorMessage}
+            {spinner}
+            {content}
+          </main>
+        </Online>
+        <Offline>
+          <main className="card-list" style={styleOffline}>
+            <ErrorIndicator message="No Internet Connection. Contact your provider or check cables" />
+          </main>
+        </Offline>
+      </React.Fragment>
     )
   }
 }

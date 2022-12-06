@@ -5,6 +5,11 @@
   filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.15));
   margin-bottom: 36px;
   border-radius: 0;
+  transition: all ease-in-out 0.2s;
+}
+
+.card-list .card.ant-card:hover {
+  transform: scale(1.05);
 }
 
 .card-list .ant-card-head-title {
