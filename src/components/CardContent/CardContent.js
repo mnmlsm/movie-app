@@ -37,32 +37,39 @@ export default class CardContent extends React.Component {
   }
 
   genres = (
-    <div>
-      <div className="genres">
-        {this.state.moveGeners.map((genre) => {
-          return (
-            <div className="genres-item" key={genre}>
-              {genre}
-            </div>
-          )
-        })}
-      </div>
-      <p className="movie-description">
-        {this.props.movieData.overview
-          ? this._cutDescription(this.props.movieData.overview)
-          : 'NO DESCRIPTION AVALIABLE'}
-      </p>
+    <div className="genres">
+      {this.state.moveGeners.map((genre) => {
+        return (
+          <div className="genres-item" key={genre}>
+            {genre}
+          </div>
+        )
+      })}
     </div>
   )
 
   render() {
     const { movieTitle, dateOfCreation, moviePosterUrl } = this.state
+    const { movieData } = this.props
 
-    const movieTitleToShow = (
-      <Tooltip title={movieTitle}>
+    const movieTitleToShow =
+      movieTitle?.length > 30 ? (
+        <Tooltip title={movieTitle}>
+          <span>{movieTitle}</span>
+        </Tooltip>
+      ) : (
         <span>{movieTitle}</span>
-      </Tooltip>
-    )
+      )
+
+    const movieDescription =
+      movieData.overview.length !== this._cutDescription(movieData.overview).length ? (
+        <Tooltip title={movieData.overview}>
+          <span>{this._cutDescription(movieData.overview)}</span>
+        </Tooltip>
+      ) : (
+        <span>{movieData.overview}</span>
+      )
+
     return (
       <React.Fragment>
         <Card
@@ -72,6 +79,7 @@ export default class CardContent extends React.Component {
         >
           <Meta title={movieTitleToShow} description={dateOfCreation} />
           {this.genres}
+          <p className="movie-description">{movieData.overview ? movieDescription : 'NO DESCRIPTION AVALIABLE'}</p>
         </Card>
       </React.Fragment>
     )

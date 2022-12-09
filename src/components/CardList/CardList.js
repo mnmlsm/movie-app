@@ -26,9 +26,9 @@ export default class CardList extends React.Component {
   }
 
   componentDidUpdate = (previousProp) => {
-    if (previousProp.queryValue !== this.props.queryValue) {
+    if (previousProp.queryValue !== this.props.queryValue || previousProp.pageNumber !== this.props.pageNumber) {
       this.movieDBService
-        .getMovieListByPhrase(this.props.queryValue)
+        .getMovieListByPhrase(this.props.queryValue, this.props.pageNumber)
         .then((fetchedData) => {
           if (fetchedData.total_results === 0) {
             this.setState(() => {
@@ -44,6 +44,7 @@ export default class CardList extends React.Component {
                 isLoadingData: false,
               }
             })
+            this.props.onLoadedData(fetchedData)
           }
         })
         .catch(this.onError)
@@ -79,7 +80,7 @@ export default class CardList extends React.Component {
       ) : isLoadingData ? (
         <Spin size={'large'} style={{ margin: '36px auto' }} />
       ) : (
-        <h3 style={{ width: '360px', margin: '36px auto' }}>{this.state.data}</h3>
+        <h3 style={{ width: '360px', margin: '36px auto', textAlign: 'center' }}>{this.state.data}</h3>
       )
 
     return (

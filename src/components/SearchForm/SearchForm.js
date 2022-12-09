@@ -18,7 +18,7 @@ export default class SearchForm extends React.Component {
     this.props.getQuery(e.target.value)
   }
 
-  debounceQueryPassing = debounce(this._handleAndPassQuery, 300)
+  debounceQueryPassing = debounce(this._handleAndPassQuery, 350)
 
   render() {
     return (

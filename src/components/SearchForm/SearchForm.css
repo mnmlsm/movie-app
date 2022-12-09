@@ -4,7 +4,7 @@
 }
 
 .input-form {
-  width: 928px;
+  max-width: 928px;
   height: 40px;
-  margin: 36px auto;
+  margin: 36px 16px;
 }
