@@ -4,7 +4,7 @@ export default class MovieDBService {
   // https://api.themoviedb.org/3/search/movie?api_key=<<api_key>>&language=en-US&query=adsasdasd&page=1&include_adult=false
   _apiImageBase = 'https://image.tmdb.org/t/p/'
 
-  async getResource(query, pageId = 1) {
+  async getResource(query = '', pageId = 1) {
     if (query.length === 0) {
       return 'No movies were found on your query'
     }
@@ -14,6 +14,7 @@ export default class MovieDBService {
     if (!res.ok) {
       throw new Error(`Couldn't fetch ${query}, ${res.status}`)
     }
+
     return await res.json()
   }
 

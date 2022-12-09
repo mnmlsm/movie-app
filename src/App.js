@@ -24,7 +24,6 @@ export default class App extends React.Component {
   }
   render() {
     const { query, pageNumber, data } = this.state
-    console.log(pageNumber)
     return (
       <div className="App">
         <SearchForm
@@ -33,7 +32,7 @@ export default class App extends React.Component {
           }}
         />
         <CardList queryValue={query} pageNumber={pageNumber} onLoadedData={this.handleOnLoad} />
-        <Paginate onPageChange={this.handlePageChange} current={data.page} total={data.total_results} />
+        <Paginate onPageChange={this.handlePageChange} current={data?.page} total={data?.total_results} />
       </div>
     )
   }

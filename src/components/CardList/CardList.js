@@ -65,6 +65,7 @@ export default class CardList extends React.Component {
     const hasDataFirstStart = hasData && this.state.data !== 'Type to search for your favorite movie'
 
     const errorMessage = error ? <ErrorIndicator /> : null
+    const hasError = errorMessage ? true : false
 
     const spinner = isLoadingData ? <Spin size={'large'} /> : null
 
@@ -89,7 +90,7 @@ export default class CardList extends React.Component {
           <main className="card-list" style={styleOnLoading}>
             {errorMessage}
             {spinner}
-            {content}
+            {!hasError && content}
           </main>
         </Online>
         <Offline>
