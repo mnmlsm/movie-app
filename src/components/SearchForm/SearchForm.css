@@ -1,0 +1,10 @@
+.search-bar-container {
+  display: flex;
+  justify-content: center;
+}
+
+.input-form {
+  width: 928px;
+  height: 40px;
+  margin: 36px auto;
+}

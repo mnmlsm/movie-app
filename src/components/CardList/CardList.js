@@ -17,18 +17,40 @@ export default class CardList extends React.Component {
   }
 
   componentDidMount() {
-    this.movieDBService
-      .getMovieListByPhrase('doctor')
-      .then((result) => {
-        this.setState({
-          data: result.results,
-          isLoadingData: false,
-        })
-      })
-      .catch(this.onError)
+    this.setState(() => {
+      return {
+        data: 'Type to search for your favorite movie',
+        isLoadingData: false,
+      }
+    })
   }
 
-  onError = (err) => {
+  componentDidUpdate = (previousProp) => {
+    if (previousProp.queryValue !== this.props.queryValue) {
+      this.movieDBService
+        .getMovieListByPhrase(this.props.queryValue)
+        .then((fetchedData) => {
+          if (fetchedData.total_results === 0) {
+            this.setState(() => {
+              return {
+                data: 'No movies were found on your query',
+                isLoadingData: false,
+              }
+            })
+          } else {
+            this.setState(() => {
+              return {
+                data: fetchedData,
+                isLoadingData: false,
+              }
+            })
+          }
+        })
+        .catch(this.onError)
+    }
+  }
+
+  onError = () => {
     this.setState({
       error: true,
       isLoadingData: false,
@@ -37,8 +59,9 @@ export default class CardList extends React.Component {
 
   render() {
     const { data, isLoadingData, error } = this.state
-
     const hasData = !(isLoadingData || error)
+    const hasDataNoMovies = hasData && this.state.data !== 'No movies were found on your query'
+    const hasDataFirstStart = hasData && this.state.data !== 'Type to search for your favorite movie'
 
     const errorMessage = error ? <ErrorIndicator /> : null
 
@@ -48,11 +71,16 @@ export default class CardList extends React.Component {
     const styleOnLoading =
       isLoadingData || error ? { justifyContent: 'center', alignItems: 'center' } : { justifyContent: 'space-between' }
 
-    const content = hasData
-      ? data.map((item, index) => {
-          return <CardContent key={item.id} id={index} movieData={data[index]} />
+    const content =
+      hasDataNoMovies && hasDataFirstStart ? (
+        data.results.map((item, index) => {
+          return <CardContent key={item.id} id={index} movieData={data.results[index]} />
         })
-      : null
+      ) : isLoadingData ? (
+        <Spin size={'large'} style={{ margin: '36px auto' }} />
+      ) : (
+        <h3 style={{ width: '360px', margin: '36px auto' }}>{this.state.data}</h3>
+      )
 
     return (
       <React.Fragment>

@@ -5,6 +5,9 @@ export default class MovieDBService {
   _apiImageBase = 'https://image.tmdb.org/t/p/'
 
   async getResource(query) {
+    if (query.length === 0) {
+      return 'No movies were found on your query'
+    }
     const res = await fetch(
       `${this._apiBase}?api_key=${this._apiKey}&language=en-US&query=${query}&page=1&include_adult=false`
     )
