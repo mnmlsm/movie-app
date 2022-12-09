@@ -4,6 +4,6 @@ body {
 .App {
   margin: 0 auto;
   max-width: 1044px;
-  height: 100vh;
+  height: 100%;
   background-color: #ffffff;
 }
