@@ -2,94 +2,58 @@ import React from 'react'
 import { Spin } from 'antd'
 import { Offline, Online } from 'react-detect-offline'
 
-import MovieDBService from '../../movieAPI'
 import CardContent from '../CardContent/CardContent'
 import './CardList.css'
 import ErrorIndicator from '../ErrorIndicator'
 
 export default class CardList extends React.Component {
-  movieDBService = new MovieDBService()
-
   state = {
-    data: [],
-    isLoadingData: true,
     error: false,
-  }
-
-  componentDidMount() {
-    this.setState(() => {
-      return {
-        data: 'Type to search for your favorite movie',
-        isLoadingData: false,
-      }
-    })
-  }
-
-  componentDidUpdate = (previousProp) => {
-    if (previousProp.queryValue !== this.props.queryValue || previousProp.pageNumber !== this.props.pageNumber) {
-      this.movieDBService
-        .getMovieListByPhrase(this.props.queryValue, this.props.pageNumber)
-        .then((fetchedData) => {
-          if (fetchedData.total_results === 0) {
-            this.setState(() => {
-              return {
-                data: 'No movies were found on your query',
-                isLoadingData: false,
-              }
-            })
-          } else {
-            this.setState(() => {
-              return {
-                data: fetchedData,
-                isLoadingData: false,
-              }
-            })
-            this.props.onLoadedData(fetchedData)
-          }
-        })
-        .catch(this.onError)
-    }
   }
 
   onError = () => {
     this.setState({
       error: true,
-      isLoadingData: false,
     })
   }
 
   render() {
-    const { data, isLoadingData, error } = this.state
+    const { isLoadingData, data, handleRatedMovies } = this.props
+    const { error } = this.state
     const hasData = !(isLoadingData || error)
-    const hasDataNoMovies = hasData && this.state.data !== 'No movies were found on your query'
-    const hasDataFirstStart = hasData && this.state.data !== 'Type to search for your favorite movie'
+    const hasDataNoMovies = hasData && this.props.data !== 'No movies were found on your query'
 
     const errorMessage = error ? <ErrorIndicator /> : null
     const hasError = errorMessage ? true : false
-
-    const spinner = isLoadingData ? <Spin size={'large'} /> : null
 
     const styleOffline = { justifyContent: 'center', alignItems: 'center' }
     const styleOnLoading =
       isLoadingData || error ? { justifyContent: 'center', alignItems: 'center' } : { justifyContent: 'space-between' }
 
-    const content =
-      hasDataNoMovies && hasDataFirstStart ? (
-        data.results.map((item, index) => {
-          return <CardContent key={item.id} id={index} movieData={data.results[index]} />
-        })
-      ) : isLoadingData ? (
-        <Spin size={'large'} style={{ margin: '36px auto' }} />
-      ) : (
-        <h3 style={{ width: '360px', margin: '36px auto', textAlign: 'center' }}>{this.state.data}</h3>
-      )
+    const content = hasDataNoMovies ? (
+      data.results.map((item, index) => {
+        return (
+          <CardContent
+            key={item.id}
+            id={item.id}
+            movieData={data.results[index]}
+            movieGenresIds={data.results[index].genre_ids}
+            handleRatedMovies={handleRatedMovies}
+            votedRating={data.results[index].rating ? data.results[index].rating : 0}
+          />
+        )
+      })
+    ) : isLoadingData ? (
+      <Spin size={'large'} style={{ margin: '36px auto' }} />
+    ) : (
+      <h3 style={{ width: '360px', margin: '36px auto', textAlign: 'center' }}>{data}</h3>
+    )
 
     return (
       <React.Fragment>
         <Online>
           <main className="card-list" style={styleOnLoading}>
             {errorMessage}
-            {spinner}
             {!hasError && content}
           </main>
         </Online>

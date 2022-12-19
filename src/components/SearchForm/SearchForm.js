@@ -2,23 +2,22 @@ import React from 'react'
 import { Input } from 'antd'
 import { debounce } from 'lodash'
 
-import MovieDBService from '../../movieAPI/MovieDbApi'
 import './SearchForm.css'
-export default class SearchForm extends React.Component {
-  movieDBService = new MovieDBService()
 
+export default class SearchForm extends React.Component {
   handleInput = (value) => {
     this.setState({
       inputQuery: value,
     })
   }
 
-  _handleAndPassQuery = (e) => {
+  handleAndPassQuery = (e) => {
+    const { getQuery } = this.props
     this.handleInput(e.target.value)
-    this.props.getQuery(e.target.value)
+    getQuery(e.target.value)
   }
 
-  debounceQueryPassing = debounce(this._handleAndPassQuery, 350)
+  debounceQueryPassing = debounce(this.handleAndPassQuery, 200)
 
   render() {
     return (

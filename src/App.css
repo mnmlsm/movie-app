@@ -4,6 +4,31 @@ body {
 .App {
   margin: 0 auto;
   max-width: 1044px;
+  min-height: 100vh;
   height: 100%;
   background-color: #ffffff;
+}
+
+.App .ant-tabs-nav-wrap {
+  justify-content: space-around;
+}
+
+.App .ant-tabs-tab-btn {
+  height: 22px;
+  left: 0%;
+  right: 0%;
+  top: calc(50% - 22px / 2 + 3.52px);
+  font-family: 'Inter UI';
+  font-size: 14px;
+  line-height: 22px;
+}
+
+.ant-tabs-tab {
+  letter-spacing: 0.08rem;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.App .ant-tabs-tab-active {
+  color: #1890ff;
 }
