@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^5.1.0",
     "date-fns": "^2.29.3",
+    "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
+    "react-detect-offline": "^2.4.5",
     "react-dom": "^18.2.0",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"
@@ -33,7 +36,6 @@
     ]
   },
   "devDependencies": {
-    "antd": "^5.0.3",
     "babel-eslint": "^10.1.0",
     "eslint": "^8.28.0",
     "eslint-auto-fix": "^1.0.4",
@@ -46,11 +48,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "husky": "^8.0.2",
     "lint-staged": "^13.0.4",
-    "lodash": "^4.17.21",
     "patch-package": "^6.5.0",
     "postinstall-postinstall": "^2.1.0",
     "prettier": "2.8.0",
-    "react-detect-offline": "^2.4.5",
     "react-sticky": "^6.0.3"
   },
   "lint-staged": {
