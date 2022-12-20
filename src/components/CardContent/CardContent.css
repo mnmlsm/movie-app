@@ -16,6 +16,15 @@
   margin-top: 2px;
 }
 
+.card .ant-card-meta-detail {
+  width: auto;
+}
+.card .ant-card-meta-title {
+  display: flex;
+  justify-content: space-between;
+  height: 32px;
+}
+
 .card-list .ant-card-head-title {
   font-style: normal;
   font-weight: 400;
@@ -39,9 +48,9 @@
 }
 
 .card .ant-card-body {
-  width: 268px;
+  width: 272px;
   padding-left: 20px;
-  padding-right: 20px;
+  padding-right: 8px;
   padding-top: 12px;
 }
 
@@ -80,15 +89,7 @@
   margin-inline-end: 4px;
 }
 
-:where(.css-dev-only-do-not-override-1s3dcof).ant-progress.ant-progress-circle .ant-progress-inner {
-  position: absolute;
-  right: 10px;
-  top: 14px;
-}
 
-:where(.css-dev-only-do-not-override-1s3dcof).ant-card .ant-card-meta-detail > div:not(:last-child) {
-  margin-bottom: 0;
-}
 
 @media (min-width: 375px) and (max-width: 1020px) {
   .App .search-bar-container {
@@ -124,9 +125,9 @@
   }
 
   .card .ant-card-body {
-    width: 268px;
+    width: 300px;
     padding-left: 16px;
-    padding-right: 20px;
+    padding-right: 8px;
     padding-top: 8px;
   }
 
