@@ -51,9 +51,9 @@ export default class CardContent extends React.Component {
   }
 
   render() {
-    const { movieTitle, dateOfCreation, moviePosterUrl, rating, id } = this.state
+    const { movieTitle, dateOfCreation, moviePosterUrl, rating, id, isRated } = this.state
 
-    const { movieData, handleRatedMovies, votedRating } = this.props
+    const { movieData, handleRatedMovie, rating: propRating } = this.props
 
     const strokeColor = (rating) => {
       rating *= 10
@@ -67,14 +67,15 @@ export default class CardContent extends React.Component {
         return '#66E900'
       }
     }
+
     const progressElement = (
       <Progress
         type="circle"
-        percent={votedRating ? votedRating * 10 : rating * 10}
+        percent={!isRated ? propRating * 10 : rating * 10}
         format={(percent) => `${percent / 10}`}
         width={30}
         strokeWidth={4}
-        strokeColor={votedRating ? strokeColor(votedRating) : strokeColor(rating)}
+        strokeColor={!isRated ? strokeColor(propRating) : strokeColor(rating)}
       />
     )
 
@@ -141,14 +142,14 @@ export default class CardContent extends React.Component {
           <p className="movie-description">{movieData.overview ? movieDescription : 'NO DESCRIPTION AVALIABLE'}</p>
           <Rate
             allowHalf
-            defaultValue={votedRating ? votedRating : 0}
+            defaultValue={0}
             count={10}
             onChange={(raiting) => {
-              handleRatedMovies(raiting, id)
+              handleRatedMovie(raiting, id)
               this.handleRaitingChange(raiting)
             }}
-            disabled={votedRating ? true : false}
-            value={votedRating ? undefined : this.state.rating}
+            value={!isRated ? propRating : rating}
+            disabled={isRated}
           />
         </Card>
       </React.Fragment>

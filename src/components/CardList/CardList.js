@@ -2,7 +2,7 @@ import React from 'react'
 import { Spin } from 'antd'
 import { Offline, Online } from 'react-detect-offline'
 
-import CardContent from '../CardContent/CardContent'
+import CardContent from '../CardContent'
 import './CardList.css'
 import ErrorIndicator from '../ErrorIndicator'
 
@@ -18,9 +18,11 @@ export default class CardList extends React.Component {
   }
 
   render() {
-    const { isLoadingData, data, handleRatedMovies } = this.props
+    const { isLoadingData, data, handleRatedMovie } = this.props
     const { error } = this.state
+
     const hasData = !(isLoadingData || error)
+
     const hasDataNoMovies = hasData && this.props.data !== 'No movies were found on your query'
 
     const errorMessage = error ? <ErrorIndicator /> : null
@@ -38,8 +40,8 @@ export default class CardList extends React.Component {
             id={item.id}
             movieData={data.results[index]}
             movieGenresIds={data.results[index].genre_ids}
-            handleRatedMovies={handleRatedMovies}
-            votedRating={data.results[index].rating ? data.results[index].rating : 0}
+            handleRatedMovie={handleRatedMovie}
+            rating={data.results[index].rating}
           />
         )
       })

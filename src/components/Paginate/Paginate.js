@@ -13,16 +13,15 @@ export default class Paginate extends React.Component {
     const content =
       total > 20 ? (
         <React.Fragment>
-          {' '}
           <Pagination
             className="pagination"
             current={current}
             defaultCurrent={1}
+            defaultPageSize={20}
             total={total}
             onChange={this.handleChange}
             showSizeChanger={false}
             responsive={true}
-            pageSize={20}
           />
         </React.Fragment>
       ) : null

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Tabs } from 'antd'
-import { debounce } from 'lodash'
 
 import MovieDBService from './movieAPI'
 import './App.css'
@@ -15,57 +14,56 @@ export default class App extends React.Component {
   state = {
     query: '',
     sessionId: '',
-    pageNumber: 1,
-    data: [],
-    isLoadingData: true,
-    error: false,
-    hasRatedMovies: false,
     genres: [],
+    hasRatedMovies: false,
+    searchPageNumber: 1,
+    ratedPageNumber: 1,
+
+    searchValues: {
+      data: [],
+      isLoadingData: true,
+    },
+
     ratedValues: {
       data: [],
-      pageNumber: 1,
+      isLoadingData: true,
     },
   }
 
-  componentDidMount = () => {
-    this.handleSession()
-  }
-
-  componentDidUpdate = (_, prevState) => {
-    if (prevState.query !== this.state.query || prevState.pageNumber !== this.state.pageNumber) {
+  componentDidMount() {
+    const { query, searchPageNumber } = this.state
+    // Creating Guest Session ID
+    this.movieDBService.getSessionID().then((sessionId) => {
+      this.setState({
+        sessionId: sessionId,
+      })
       this.movieDBService
-        .getMovieListByPhrase(this.state.query, this.state.pageNumber)
+        .getMovieListByPhrase(query, searchPageNumber)
         .then((fetchedData) => {
           this.handleFetchedData(fetchedData)
         })
-        .catch(this.onError)
+        .catch((err) => {
+          throw new Error(err.message)
+        })
+    })
+  }
+
+  componentDidUpdate(_, prevState) {
+    // Search Tab
+    const { query, searchPageNumber } = this.state
+    if (prevState.query !== query || prevState.searchPageNumber !== searchPageNumber) {
+      this.movieDBService
+        .getMovieListByPhrase(query, searchPageNumber)
+        .then((fetchedData) => {
+          this.handleFetchedData(fetchedData)
+        })
+        .catch((err) => {
+          throw new Error(err.message)
+        })
     }
   }
 
-  handlePageChange = (pageNumber) => {
-    this.setState({
-      pageNumber: pageNumber,
-    })
-  }
-
-  handleRatedPageChange = (pageNumber = 1) => {
-    this.getRatedMovies(this.state.sessionId, pageNumber)
-  }
-
-  getRatedMovies = (sessionId, pageId = 1) => {
-    this.movieDBService.getRatedMovies(sessionId, pageId).then((res) => {
-      this.setState(() => {
-        return {
-          ratedValues: {
-            data: res,
-          },
-          hasRatedMovies: true,
-          isLoadingData: false,
-        }
-      })
-    })
-  }
-
+  // Search movie functions
   handleGenres = () => {
     this.movieDBService.getGenres().then((genres) => {
       this.setState(() => {
@@ -78,56 +76,89 @@ export default class App extends React.Component {
 
   handleFetchedData = (fetchedData) => {
     if (fetchedData.total_results === 0) {
-      this.setState(() => {
-        return {
+      this.setState({
+        searchValues: {
           data: 'No movies were found on your query',
           isLoadingData: false,
-        }
+        },
       })
     } else {
-      this.setState(() => {
-        this.handleGenres()
-        return {
+      this.handleGenres()
+      this.setState({
+        searchValues: {
           data: fetchedData,
           isLoadingData: false,
-        }
+        },
       })
     }
   }
 
-  handleSession = () => {
-    this.movieDBService.getSessionID().then((res) => {
-      this.setState({
-        sessionId: res,
-      })
-      this.movieDBService
-        .getMovieListByPhrase(this.state.query, this.state.query)
-        .then((fetchedData) => {
-          this.handleFetchedData(fetchedData)
-        })
-        .catch(this.onError)
+  handleSearchPageChange = (pageId) => {
+    this.setState({
+      searchPageNumber: pageId,
     })
   }
 
-  addNewRatedMovie = (sessionId) => {
-    this.getRatedMovies(sessionId)
+  // Rated movie functions
+  // adding rated movie for list to show in Rated Tab
+  handleRatedMovie = (raiting, id) => {
+    const { sessionId, ratedPageNumber } = this.state
+    this.movieDBService.postRateMovie(id, sessionId, raiting).then((status) => {
+      if (status.success) {
+        this.setState({
+          hasRatedMovies: status.success,
+        })
+        this.movieDBService.getRatedMovies(sessionId, ratedPageNumber).then((result) => {
+          this.setState({
+            ratedValues: {
+              data: result,
+              isLoadingData: false,
+            },
+          })
+        })
+      }
+    })
   }
 
-  debounceAddingMovie = debounce(this.addNewRatedMovie, 80)
+  handleTabChange = () => {
+    const { sessionId, ratedPageNumber } = this.state
+    this.movieDBService.getRatedMovies(sessionId, ratedPageNumber).then((result) => {
+      this.setState({
+        ratedValues: {
+          data: result,
+          isLoadingData: false,
+        },
+      })
+    })
+  }
 
-  handleRatedMovies = async (raiting, id) => {
+  handleRatedPageChange = (pageId) => {
     const { sessionId } = this.state
-    this.movieDBService.postRateMovie(id, sessionId, raiting).then((_) => {
-      this.debounceAddingMovie(sessionId)
+    this.movieDBService.getRatedMovies(sessionId, pageId).then((result) => {
+      this.setState({
+        ratedPageNumber: pageId,
+        ratedValues: {
+          data: result,
+          isLoadingData: false,
+        },
+      })
     })
   }
 
   render() {
-    const { pageNumber, data, isLoadingData, genres, ratedValues, hasRatedMovies } = this.state
+    const {
+      genres,
+      searchPageNumber,
+      ratedPageNumber,
+      searchValues: { data: foundData, isLoadingData: isLoadingFoundData },
+      ratedValues: { data: ratedData, isLoadingData: isLoadingRatedData },
+      hasRatedMovies,
+    } = this.state
     return (
       <div className="App">
         <GenresProvider value={genres}>
           <Tabs
+            onChange={this.handleTabChange}
             defaultActiveKey="1"
             items={[
               {
@@ -136,23 +167,22 @@ export default class App extends React.Component {
                 children: (
                   <>
                     <SearchForm
-                      key={1}
+                      key="main-search-form"
                       getQuery={(query) => {
                         this.setState({ query: query })
                       }}
                     />
                     <CardList
                       key="card-list"
-                      data={data}
-                      pageNumber={pageNumber}
-                      isLoadingData={isLoadingData}
-                      handleRatedMovies={this.handleRatedMovies}
+                      data={foundData}
+                      isLoadingData={isLoadingFoundData}
+                      handleRatedMovie={this.handleRatedMovie}
                     />
                     <Paginate
-                      key="paginate"
-                      onPageChange={this.handlePageChange}
-                      current={data?.page}
-                      total={data?.total_results}
+                      key="search-paginate"
+                      onPageChange={this.handleSearchPageChange}
+                      current={searchPageNumber}
+                      total={foundData?.total_results}
                     />
                   </>
                 ),
@@ -162,17 +192,12 @@ export default class App extends React.Component {
                 key: '2',
                 children: (
                   <>
-                    <CardList
-                      key="card-list"
-                      data={ratedValues.data}
-                      pageNumber={ratedValues.pageNumber}
-                      isLoadingData={isLoadingData}
-                    />
+                    <CardList key="card-list" data={ratedData} isLoadingData={isLoadingRatedData} />
                     <Paginate
-                      key="paginate"
+                      key="rated-paginate"
                       onPageChange={this.handleRatedPageChange}
-                      current={ratedValues?.data?.page}
-                      total={ratedValues?.data?.total_results}
+                      current={ratedPageNumber}
+                      total={ratedData?.total_results}
                     />
                   </>
                 ),

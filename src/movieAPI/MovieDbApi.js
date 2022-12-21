@@ -57,7 +57,7 @@ export default class MovieDBService {
     return await res.json()
   }
 
-  async getMovieListByPhrase(query, pageId = 1) {
+  async getMovieListByPhrase(query, pageId) {
     return await this.getResource(query, pageId)
   }
 

@@ -23,6 +23,7 @@
   display: flex;
   justify-content: space-between;
   height: 32px;
+  margin-bottom: 0 !important;
 }
 
 .card-list .ant-card-head-title {
@@ -59,6 +60,7 @@
   font-weight: 400;
   font-size: 12px;
   line-height: 22px;
+  margin-top: 8px;
 }
 
 .card .genres {
@@ -88,8 +90,6 @@
 .ant-rate .ant-rate-star:not(:last-child) {
   margin-inline-end: 4px;
 }
-
-
 
 @media (min-width: 375px) and (max-width: 1020px) {
   .App .search-bar-container {
